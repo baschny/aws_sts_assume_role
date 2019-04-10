@@ -20,9 +20,9 @@ The cache path and the timeout that the role observes are set in the default var
 
 ```
 (ansible) camus: ls -l /Users/thisdougb/.aws/
--rw-------  1 doug  staff   755 10 Apr 21:13 ansible_aws_assume_role.533274721903.dev-role.cache
--rw-------  1 doug  staff  1128 10 Mar 18:23 config
--rw-------  1 doug  staff   238 27 Mar 10:48 credentials
+-rw-------  1 thisdougb  staff   755 10 Apr 21:13 ansible_aws_assume_role.533274721903.dev-role.cache
+-rw-------  1 thisdougb  staff  1128 10 Mar 18:23 config
+-rw-------  1 thisdougb  staff   238 27 Mar 10:48 credentials
 ```
 ### Requirements
 ```
