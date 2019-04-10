@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Doug Bridgens
+  description: This role allows for switching of AWS role-credentials mid-playbook.
+  company: Far-Oeuf Ltd
+  license: MIT
+  min_ansible_version: 2.4
+  galaxy_tags:
+      - aws
+      - assume
+      - role
+      - sts
+
+dependencies: []
+

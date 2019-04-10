@@ -1,0 +1,117 @@
+---
+# tasks file for roles/aws_sts_assume_role
+
+- name: ensure we have a username defined for the mfa path
+  set_fact:
+      aws_user_name : "{{ lookup('env','aws_user_name') }}"
+  when:
+      - aws_user_name is undefined
+
+# aws_assume_role will never be defined here
+- name: Get the current caller identity facts
+  aws_caller_facts:
+  register: caller_facts
+  when:
+      - aws_assume_role is undefined
+
+- name: Set username based on the current caller facts
+  set_fact:
+    aws_user_name: "{{ caller_facts.arn.split('/')[1] }}"
+  when:
+      - (aws_user_name is undefined) or
+        (aws_user_name is none) or
+        (aws_user_name | trim == "")
+
+- name: Set aws_mfa_account_id based on the current caller facts
+  set_fact:
+    aws_mfa_account_id: "{{ caller_facts.account }}"
+  when:
+      - (aws_mfa_account_id is undefined) or
+        (aws_mfa_account_id is none) or
+        (aws_mfa_account_id | trim == "")
+
+- name: ensure we have a username set
+  fail:
+    msg: "aws_user_name not defined..."
+  when: (aws_user_name is undefined) or
+        (aws_user_name is none) or
+        (aws_user_name | trim == "")
+
+# try and load pre-used credentials from cache
+- name: "Check for {{ cache_path }}{{ cache_file_name }}"
+  find:
+      path: "{{ cache_path }}"
+      file_type: file
+      age: "{{ cache_time }}"
+      age_stamp: mtime
+      patterns: "{{ cache_file_name }}"
+  register: stat_cache_file
+
+- name: load assumed role from cache 
+  include_vars:
+    file: "{{ cache_path }}{{ cache_file_name }}"
+    name: cached_assumed_role
+  when:
+      - stat_cache_file.matched == 1
+      - stat_cache_file.files[0].size > 0
+
+- name: set convenience vars for sts credentials
+  set_fact:
+      sts_aws_access_key: "{{ cached_assumed_role.sts_creds.access_key }}"
+      sts_aws_secret_key: "{{ cached_assumed_role.sts_creds.secret_key }}"
+      sts_security_token: "{{ cached_assumed_role.sts_creds.session_token }}"
+      sts_assumed_role_id: "{{ cached_assumed_role.sts_user.assumed_role_id }}"
+  when:
+      - cached_assumed_role is defined
+
+# no cache so re authentate
+- name: require user supplied MFA code
+  pause:
+    prompt: "Enter mfa code for {{ aws_user_name }} to assume role: {{ aws_role_session_name }}"
+  register: user_supplied_mfa_code
+  when:
+      - cached_assumed_role is undefined
+      - without_mfa is undefined
+    
+- name: call aws-assume-role without MFA to get temp sts credentials
+  sts_assume_role:
+      role_arn: "{{ switch_to_aws_role_arn }}"
+      role_session_name: "{{ aws_role_session_name }}"
+      region: "{{ aws_region }}"
+  register: assumed_role_without_mfa
+  when:
+      - cached_assumed_role is undefined
+      - without_mfa is defined
+
+- name: call aws-assume-role with MFA token to get temp sts credentials
+  sts_assume_role:
+      mfa_serial_number: "arn:aws:iam::{{ aws_mfa_account_id }}:mfa/{{ aws_user_name }}"
+      mfa_token: "{{ user_supplied_mfa_code.user_input }}"
+      role_arn: "{{ switch_to_aws_role_arn }}"
+      role_session_name: "{{ aws_role_session_name }}"
+      region: "{{ aws_region }}"
+  register: assumed_role_with_mfa
+  when:
+      - cached_assumed_role is undefined
+      - without_mfa is undefined
+
+# two different vars because of: https://github.com/ansible/ansible/issues/4297#issuecomment-356427588
+- set_fact:
+    assumed_role: '{{ assumed_role_without_mfa if without_mfa is defined else assumed_role_with_mfa }}'
+    
+- name: store credentials
+  set_fact:
+      sts_aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
+      sts_aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
+      sts_security_token: "{{ assumed_role.sts_creds.session_token }}"
+      sts_assumed_role_id: "{{ assumed_role.sts_user.assumed_role_id }}"
+  when:
+      - cached_assumed_role is undefined
+
+- name: "cache aws-assume-role sts credentials to {{ cache_path }}{{ cache_file_name }}"
+  copy:
+      content: "{{ assumed_role }}"
+      dest: "{{ cache_path }}{{ cache_file_name }}"
+      mode: 0600
+  when:
+      - cached_assumed_role is undefined
