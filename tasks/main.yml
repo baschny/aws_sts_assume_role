@@ -23,7 +23,7 @@
       patterns: "{{ aws_sts_assume_role_cache_file_name }}"
   register: aws_sts_assume_role_stat_cache_file
 
-- name: load assumed role from cache 
+- name: load assumed role from cache
   include_vars:
     file: "{{ aws_sts_assume_role_cache_path }}{{ aws_sts_assume_role_cache_file_name }}"
     name: aws_sts_assume_role_cached_assumed_role
@@ -48,7 +48,7 @@
   when:
       - aws_sts_assume_role_cached_assumed_role is undefined
       - aws_sts_assume_role_without_mfa is undefined
-    
+
 - name: call aws-assume-role without MFA to get temp sts credentials
   sts_assume_role:
       role_arn: "{{ aws_sts_assume_role_switch_to_aws_role_arn }}"
@@ -66,14 +66,17 @@
       role_arn: "{{ aws_sts_assume_role_switch_to_aws_role_arn }}"
       role_session_name: "{{ aws_sts_assume_role_aws_role_session_name }}"
       region: "{{ aws_region }}"
-  register: assumed_role_with_mfa
+  register: aws_sts_assume_role_assumed_role_with_mfa
   when:
       - aws_sts_assume_role_cached_assumed_role is undefined
       - aws_sts_assume_role_without_mfa is undefined
 
 # two different vars because of: https://github.com/ansible/ansible/issues/4297#issuecomment-356427588
-- set_fact:
-    assumed_role: '{{ aws_sts_assume_role_assumed_role_without_mfa if aws_sts_assume_role_without_mfa is defined else aws_sts_assume_role_assumed_role_with_mfa }}'
+- name: Set assumed role fact
+  set_fact:
+    aws_sts_assume_role_assumed_role: >-
+        '{{ aws_sts_assume_role_assumed_role_without_mfa if aws_sts_assume_role_without_mfa is defined 
+        else aws_sts_assume_role_assumed_role_with_mfa }}'
     
 - name: store credentials
   set_fact:
