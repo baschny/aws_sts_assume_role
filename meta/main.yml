@@ -9,5 +9,24 @@ galaxy_info:
       - assume
       - role
       - sts
+  platforms:
+      - name: EL
+        versions:
+            - all
+      - name: Fedora
+        versions:
+            - all
+      - name: Debian
+        versions:
+            - all
+      - name: Ubuntu
+        versions:
+            - all
+      - name: MacOSX
+        versions:
+            - all
 
-dependencies: []
+  cloud_platforms:
+    - AWS
+
+allow_duplicates: true
