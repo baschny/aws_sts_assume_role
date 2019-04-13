@@ -44,6 +44,7 @@ The role accepts following variables:
 | aws_username       | string | name of user for MFA authentication      | no       | current AWS caller username   |
 | aws_mfa_account_id | string | ID of the account for MFA authentication | no       | current AWS caller account ID |
 | without_mfa        | bool   | If defined does not ask for MFA token    | no       | undefined                     |
+| caching_enabled    | bool   | Enables caching of assumed credentials   | yes      | no                            |
 
 
 ### Exported Variables

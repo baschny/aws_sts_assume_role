@@ -1,12 +1,11 @@
 ---
 # defaults file for roles/aws_sts_assume_role
 
-# assumes all devices under path /role/
 switch_to_aws_role_arn: "arn:aws:iam::{{ aws_account_id }}:role/{{ switch_to_role }}"
 aws_role_session_name:  "{{ switch_to_role }}"
 
-# local caching.
-# TODO: group all cached roles in one file, but need to manage timeouts individually
+# Caching of assumed role credentials to local filesystem.
+caching_enabled: no
 cache_path: ~/.aws/
 cache_file_name: "ansible_aws_assume_role.{{ aws_account_id }}.{{ aws_role_session_name }}.cache"
 cache_time: -10m

@@ -115,3 +115,4 @@
       mode: 0600
   when:
       - cached_assumed_role is undefined
+      - caching_enabled | bool == true
