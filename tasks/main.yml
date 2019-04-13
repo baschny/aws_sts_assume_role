@@ -91,4 +91,4 @@
       mode: 0600
   when:
       - aws_sts_assume_role_cached_assumed_role is undefined
-      - aws_sts_assume_role_caching_enabled | bool == true
+      - aws_sts_assume_role_caching_enabled | bool
