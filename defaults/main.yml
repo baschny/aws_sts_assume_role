@@ -1,11 +1,11 @@
 ---
 # defaults file for roles/aws_sts_assume_role
-
-switch_to_aws_role_arn: "arn:aws:iam::{{ aws_account_id }}:role/{{ switch_to_role }}"
-aws_role_session_name:  "{{ switch_to_role }}"
+aws_sts_assume_role_aws_account_id: 
+aws_sts_assume_role_switch_to_aws_role_arn: "arn:aws:iam::{{ aws_sts_assume_role_aws_account_id }}:role/{{ aws_sts_assume_role_switch_to_role }}"
+aws_sts_assume_role_aws_role_session_name:  "{{ aws_sts_assume_role_switch_to_role }}"
 
 # Caching of assumed role credentials to local filesystem.
-caching_enabled: no
-cache_path: ~/.aws/
-cache_file_name: "ansible_aws_assume_role.{{ aws_account_id }}.{{ aws_role_session_name }}.cache"
-cache_time: -10m
+aws_sts_assume_role_caching_enabled: false
+aws_sts_assume_role_cache_path: "~/.aws/"
+aws_sts_assume_role_cache_file_name: "aws_sts_assume_role_.{{ aws_sts_assume_role_aws_account_id }}.{{ aws_sts_assume_role_aws_role_session_name }}.cache"
+aws_sts_assume_role_cache_time: "-10m"

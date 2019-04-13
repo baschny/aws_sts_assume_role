@@ -51,9 +51,9 @@ The role accepts following variables:
 This Ansible role stores the temporary role credentials as facts.
 These variables must be used on the tasks you want to run as that role.
 ```yaml
-- name: "Create users: using {{ sts_assumed_role_id }}"
+- name: "Create IAM User"
   iam_user:
-    name: "{{ create_user }}"
+    name: "thisdougb"
     state: present
     aws_access_key: "{{ sts_aws_access_key }}"
     aws_secret_key: "{{ sts_aws_secret_key }}"
@@ -73,7 +73,10 @@ Example usage for `aws_sts_assume_role`:
   roles:
     - {
         role: aws_sts_assume_role,
-        vars: { aws_account_id: "533274721903", switch_to_role: "admin-instances-role" }
+        vars: { 
+            aws_sts_assume_role_aws_account_id: "533274721903", 
+            aws_sts_assume_role_switch_to_role: "admin-instances-role" 
+        }
       }
     - fire_up_load_test_env
 ```
@@ -81,11 +84,25 @@ Example usage in automated environment, without prompting for an MFA token:
 ```yaml
 - hosts: localhost
   roles:
-    - { role: aws_sts_assume_role, aws_account_id: "533274721903", switch_to_role: "rds-admin-role", without_mfa: yes }
+    - { 
+        role: aws_sts_assume_role, 
+        vars: {
+            aws_sts_assume_role_aws_account_id: "533274721903", 
+            aws_sts_assume_role_switch_to_role: "rds-admin-role", 
+            without_mfa: yes 
+        }
+    }
     - rotate_database_service_credentials
     
     # now we switch role for another task
-    - { role: aws_sts_assume_role, aws_account_id: "533274721903", switch_to_role: "dev-instances-role", without_mfa: yes }
+    - { 
+        role: aws_sts_assume_role, 
+        vars: { 
+            aws_sts_assume_role_aws_account_id: "533274721903", 
+            aws_sts_assume_role_switch_to_role: "dev-instances-role", 
+            without_mfa: yes
+        }
+    }
     - terminate_all_unused_instances_at_night
 ```
 
