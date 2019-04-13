@@ -26,7 +26,4 @@ galaxy_info:
         versions:
             - all
 
-  cloud_platforms:
-    - AWS
-
 allow_duplicates: true
