@@ -61,7 +61,7 @@
 
 - name: call aws-assume-role with MFA token to get temp sts credentials
   sts_assume_role:
-      mfa_serial_number: "arn:aws:iam::{{ aws_sts_assume_role_aws_mfa_account_id }}:mfa/{{ aws_sts_assume_role_aws_user_name }}"
+      mfa_serial_number: "{{ aws_sts_assume_role_mfa_serial }}"
       mfa_token: "{{ aws_sts_assume_role_user_supplied_mfa_code.user_input }}"
       role_arn: "{{ aws_sts_assume_role_switch_to_aws_role_arn }}"
       role_session_name: "{{ aws_sts_assume_role_aws_role_session_name }}"

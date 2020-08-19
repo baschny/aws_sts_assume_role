@@ -3,6 +3,7 @@
 aws_sts_assume_role_aws_account_id: 
 aws_sts_assume_role_switch_to_aws_role_arn: "arn:aws:iam::{{ aws_sts_assume_role_aws_account_id }}:role/{{ aws_sts_assume_role_switch_to_role }}"
 aws_sts_assume_role_aws_role_session_name:  "{{ aws_sts_assume_role_switch_to_role }}"
+aws_sts_assume_role_mfa_serial: ""
 
 # Caching of assumed role credentials to local filesystem.
 aws_sts_assume_role_caching_enabled: false
