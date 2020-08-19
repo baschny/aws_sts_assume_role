@@ -44,6 +44,7 @@
 - name: require user supplied MFA code
   pause:
     prompt: "Enter mfa code for {{ aws_sts_assume_role_aws_user_name }} to assume role: {{ aws_sts_assume_role_aws_role_session_name }}"
+    echo: no
   register: aws_sts_assume_role_user_supplied_mfa_code
   when:
       - aws_sts_assume_role_cached_assumed_role is undefined
