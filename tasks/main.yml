@@ -75,9 +75,8 @@
 # two different vars because of: https://github.com/ansible/ansible/issues/4297#issuecomment-356427588
 - name: Set assumed role fact
   set_fact:
-    aws_sts_assume_role_assumed_role: >-
-        '{{ aws_sts_assume_role_assumed_role_without_mfa if aws_sts_assume_role_without_mfa is defined
-        else aws_sts_assume_role_assumed_role_with_mfa }}'
+    aws_sts_assume_role_assumed_role: "{{ aws_sts_assume_role_assumed_role_without_mfa if aws_sts_assume_role_without_mfa is defined
+        else aws_sts_assume_role_assumed_role_with_mfa }}"
 
 - name: store credentials
   set_fact:
