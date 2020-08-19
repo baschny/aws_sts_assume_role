@@ -36,7 +36,7 @@
       sts_aws_access_key: "{{ aws_sts_assume_role_cached_assumed_role.sts_creds.access_key }}"
       sts_aws_secret_key: "{{ aws_sts_assume_role_cached_assumed_role.sts_creds.secret_key }}"
       sts_security_token: "{{ aws_sts_assume_role_cached_assumed_role.sts_creds.session_token }}"
-      sts_assumed_role_id: "{{ caws_sts_assume_role_ached_assumed_role.sts_user.assumed_role_id }}"
+      sts_assumed_role_id: "{{ aws_sts_assume_role_cached_assumed_role.sts_user.assumed_role_id }}"
   when:
       - aws_sts_assume_role_cached_assumed_role is defined
 
@@ -52,7 +52,7 @@
 - name: call aws-assume-role without MFA to get temp sts credentials
   sts_assume_role:
       role_arn: "{{ aws_sts_assume_role_switch_to_aws_role_arn }}"
-      role_session_name: "{{ aws_aws_sts_assume_role_role_session_name }}"
+      role_session_name: "{{ aws_sts_assume_role_aws_role_session_name }}"
       region: "{{ aws_region }}"
   register: aws_sts_assume_role_assumed_role_without_mfa
   when:
