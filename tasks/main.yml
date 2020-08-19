@@ -2,7 +2,7 @@
 # tasks file for roles/aws_sts_assume_role
 
 - name: Get the current caller identity facts
-  aws_caller_facts:
+  aws_caller_info:
   register: aws_sts_assume_role_caller_facts
 
 - name: Set username based on the current AWS caller facts
